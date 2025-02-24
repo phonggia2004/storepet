@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QWidget" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1022</width>
+    <height>763</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>PetStore Management System</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <widget class="QFrame" name="userInfoFrame">
+     <layout class="QVBoxLayout" name="userLayout">
+      <item>
+       <widget class="QLabel" name="userAvatar">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap>avatar.png</pixmap>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="userName">
+        <property name="text">
+         <string>Người dùng: Admin</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="Role">
+        <property name="text">
+         <string>Chức vụ: Quản lý</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="logoutButton">
+        <property name="text">
+         <string>Đăng Xuất</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QStackedWidget" name="mainContent">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="homePage">
+      <layout class="QVBoxLayout" name="homeLayout">
+       <item>
+        <widget class="QLabel" name="welcomeLabel">
+         <property name="text">
+          <string>CHÀO MỪNG ĐẾN VỚI PETSTORE</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="petManagementPage"/>
+     <widget class="QWidget" name="productManagementPage"/>
+     <widget class="QWidget" name="customerManagementPage"/>
+     <widget class="QWidget" name="invoiceManagementPage"/>
+     <widget class="QWidget" name="employeeManagementPage"/>
+     <widget class="QWidget" name="reportManagementPage"/>
+    </widget>
+   </item>
+   <item>
+    <widget class="QFrame" name="menuFrame">
+     <layout class="QVBoxLayout" name="menuLayout">
+      <item>
+       <widget class="QPushButton" name="btnPetManagement">
+        <property name="text">
+         <string>Quản Lý Thú Cưng</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnProductManagement">
+        <property name="text">
+         <string>Quản Lý Sản Phẩm</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnCustomerManagement">
+        <property name="text">
+         <string>Quản Lý Khách Hàng</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnInvoiceManagement">
+        <property name="text">
+         <string>Quản Lý Hóa Đơn</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnEmployeeManagement">
+        <property name="text">
+         <string>Quản Lý Nhân Viên</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnReportManagement">
+        <property name="text">
+         <string>Báo Cáo &amp; Thống Kê</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="menuSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
