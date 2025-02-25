@@ -1,13 +1,14 @@
 import sys
 import os
-from PyQt6.QtWidgets import QApplication, QWidget, QTableWidgetItem, QMessageBox
+from PyQt6.QtWidgets import QApplication, QDialog, QTableWidgetItem, QMessageBox  # Đổi QWidget thành QDialog
 from PyQt6 import uic
 from PyQt6.QtCore import Qt, QDate
 import pymysql
+from PyQt6.QtWidgets import QDialog
 from datetime import datetime
 from config import connect_db
 
-class AddOrderForm(QWidget):
+class AddOrderForm(QDialog):  # Đổi thành QDialog
     def __init__(self, parent=None):
         super().__init__(parent)
         self.parent_window = parent
@@ -25,7 +26,7 @@ class AddOrderForm(QWidget):
         self.combo_danhmuc.addItem("Thú Cưng")
         self.combo_danhmuc.addItem("Sản Phẩm")
 
-        # Kết nối tín hiệu cho combo_danhmuc để cập nhật sản phẩm/thú cưng
+        # Kết nối tín hiệu
         self.combo_danhmuc.currentIndexChanged.connect(self.update_product_list)
         self.btn_add.clicked.connect(self.add_product)
         self.btn_save.clicked.connect(self.save_order)
@@ -106,6 +107,7 @@ class AddOrderForm(QWidget):
         conn = connect_db()
         if not conn:
             QMessageBox.critical(self, "Lỗi", "Không thể kết nối đến cơ sở dữ liệu!")
+            self.reject()  # Đóng dialog với Rejected nếu lỗi
             return
 
         cursor = conn.cursor()
@@ -116,6 +118,7 @@ class AddOrderForm(QWidget):
             QMessageBox.warning(self, "Lỗi", "Vui lòng thêm ít nhất một thú cưng hoặc sản phẩm!")
             cursor.close()
             conn.close()
+            self.reject()  # Đóng dialog với Rejected nếu không có sản phẩm
             return
 
         try:
@@ -133,7 +136,7 @@ class AddOrderForm(QWidget):
                 loai = self.table.item(row, 0).text()
                 ma = self.table.item(row, 1).text()
                 soluong = int(self.table.item(row, 2).text())
-                gia = float(self.table.item(row, 3).text().replace(" VNĐ", "").replace(",", ""))  # Loại bỏ " VNĐ" và dấu phẩy để lấy giá
+                gia = float(self.table.item(row, 3).text().replace(" VNĐ", "").replace(",", "")) / soluong  # Chia để lấy đơn giá
 
                 ma_thucung = ma if loai == "Thú Cưng" else None
                 ma_sanpham = ma if loai == "Sản Phẩm" else None
@@ -150,13 +153,12 @@ class AddOrderForm(QWidget):
             conn.commit()
 
             QMessageBox.information(self, "Thành công", "Đơn hàng đã được lưu thành công!")
-            self.close()
-            if self.parent_window:
-                self.parent_window.load_orders()  # Cập nhật giao diện chính (nếu có)
+            self.accept()  # Đóng dialog với Accepted nếu thành công
 
         except pymysql.Error as e:
             QMessageBox.critical(self, "Lỗi", f"Lỗi khi lưu đơn hàng: {str(e)}")
             conn.rollback()
+            self.reject()  # Đóng dialog với Rejected nếu lỗi
         finally:
             cursor.close()
             conn.close()
@@ -164,5 +166,5 @@ class AddOrderForm(QWidget):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = AddOrderForm()
-    window.show()
+    window.exec()  # Dùng exec() thay vì show() để chạy modal
     sys.exit(app.exec())
