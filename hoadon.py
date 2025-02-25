@@ -46,48 +46,105 @@ class OrderManagement(QWidget):
         self.orderDetailTable.setHorizontalHeaderLabels(headers)
         self.orderDetailTable.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)  # Không cho chỉnh sửa trực tiếp
 
+    # def load_orders(self):
+    #     """Tải tất cả hóa đơn từ cơ sở dữ liệu"""
+    #     print("Đang tải lại danh sách hóa đơn...")
+
+    # # Lưu hóa đơn đang chọn (nếu có)
+    #     current_mahoadon = None
+    #     if self.orderTable.currentRow() >= 0:
+    #         current_mahoadon = self.orderTable.item(self.orderTable.currentRow(), 0).text()
+
+    # # Kiểm tra và kết nối lại cơ sở dữ liệu
+    #     if not self.db or not self.db.open:
+    #         print("Cơ sở dữ liệu bị mất kết nối. Đang kết nối lại...")
+    #         self.db = connect_db()
+    #         if not self.db:
+    #             QMessageBox.critical(self, "Lỗi", "Không thể kết nối đến cơ sở dữ liệu!")
+    #             return
+    #         self.cursor = self.db.cursor()
+
+    #     try:
+    #     # Sử dụng LEFT JOIN để lấy tất cả hóa đơn
+    #         self.cursor.execute("""
+    #         SELECT h.MaHoaDon, h.MaKhachHang, h.NgayLap,
+    #         COALESCE(SUM(c.SoLuong * c.Gia), 0) AS TongTien
+    #         FROM HoaDon h
+    #         LEFT JOIN ChiTietHoaDon c ON h.MaHoaDon = c.MaHoaDon
+    #         GROUP BY h.MaHoaDon, h.MaKhachHang, h.NgayLap
+    #         ORDER BY h.MaHoaDon;
+    #         """)
+    #         orders = self.cursor.fetchall()
+    #         print(f"🔍 Số hóa đơn lấy được: {len(orders)}")
+    #         print("Dữ liệu hóa đơn:", orders) 
+
+    #     # Xóa toàn bộ dữ liệu cũ trong bảng
+    #         self.orderTable.setRowCount(0)
+
+    #     # Cập nhật bảng hóa đơn
+    #         self.orderTable.setRowCount(len(orders))
+    #         for row, order in enumerate(orders):
+    #             print(f"Đang cập nhật hàng {row}: {order}")
+    #             for col, value in enumerate(order):
+    #                 item = QTableWidgetItem(str(value) if value is not None else "")
+    #                 if col == 3:  # Format tổng tiền
+    #                     item.setText(f"{value:,.0f} VNĐ" if value is not None else "0 VNĐ")
+    #                 item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+    #                 self.orderTable.setItem(row, col, item)
+    #                 self.orderTable.viewport().update()
+    #                 self.orderTable.repaint()
+
+
+    #     # Xóa dữ liệu cũ trong bảng chi tiết
+    #         self.orderDetailTable.setRowCount(0)
+
+    #     # Khôi phục dòng đã chọn hoặc chọn dòng đầu tiên nếu có dữ liệu
+    #         if orders:
+    #             if current_mahoadon:
+    #                 for i in range(self.orderTable.rowCount()):
+    #                     if self.orderTable.item(i, 0).text() == current_mahoadon:
+    #                         self.orderTable.selectRow(i)
+    #                         if self.orderTable.item(i, 0):
+    #                             self.show_order_details(self.orderTable.item(i, 0))
+    #                         break
+    #                 else:
+    #                     self.orderTable.selectRow(0)
+    #                     if self.orderTable.item(0, 0):
+    #                         self.show_order_details(self.orderTable.item(0, 0))
+    #             else:
+    #                 self.orderTable.selectRow(0)
+    #                 if self.orderTable.item(0, 0):
+    #                     self.show_order_details(self.orderTable.item(0, 0))
+
+    #     except Exception as e:
+    #         print(f"Lỗi khi tải danh sách hóa đơn: {str(e)}") 
+    #         QMessageBox.critical(self, "Lỗi", f"Không thể tải danh sách hóa đơn: {str(e)}")
     def load_orders(self):
-        """Tải tất cả hóa đơn từ cơ sở dữ liệu"""
-        print("Đang tải lại danh sách hóa đơn...")
-        # Sử dụng kết nối hiện có thay vì tạo mới
-        if not self.db or not self.db.open:
-            print("Cơ sở dữ liệu bị mất kết nối. Đang kết nối lại...")
+        if not self.db or self.db.close:  # Kiểm tra kết nối có mở không
             self.db = connect_db()
+            if not self.db:
+                QMessageBox.critical(self, "Lỗi", "Không thể kết nối đến cơ sở dữ liệu!")
+                return
             self.cursor = self.db.cursor()
         
         try:
             self.cursor.execute("""
-            SELECT h.MaHoaDon, h.MaKhachHang, h.NgayLap,
-                SUM(c.SoLuong * c.Gia) AS TongTien
-            FROM HoaDon h
-            JOIN ChiTietHoaDon c ON h.MaHoaDon = c.MaHoaDon
-            GROUP BY h.MaHoaDon, h.MaKhachHang, h.NgayLap
-            ORDER BY h.MaHoaDon;
+                SELECT h.MaHoaDon, h.MaKhachHang, h.NgayLap, COALESCE(SUM(c.SoLuong * c.Gia), 0) AS TongTien
+                FROM HoaDon h
+                LEFT JOIN ChiTietHoaDon c ON h.MaHoaDon = c.MaHoaDon
+                GROUP BY h.MaHoaDon, h.MaKhachHang, h.NgayLap
+                ORDER BY h.MaHoaDon;
             """)
             orders = self.cursor.fetchall()
-
-            # Cập nhật bảng hóa đơn
+            print("Số hóa đơn:", len(orders))  # Debug: kiểm tra số lượng hóa đơn
             self.orderTable.setRowCount(len(orders))
             for row, order in enumerate(orders):
                 for col, value in enumerate(order):
-                    item = QTableWidgetItem(str(value))
-                    if col == 3:  # Format tổng tiền
-                        item.setText(f"{value:,.0f} VNĐ")
+                    item = QTableWidgetItem(str(value) if value is not None else "")
+                    if col == 3:  # Cột Tổng Tiền
+                        item.setText(f"{value:,.0f} VNĐ" if value is not None else "0 VNĐ")
                     item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                     self.orderTable.setItem(row, col, item)
-
-            # Xóa dữ liệu cũ trong bảng chi tiết
-            self.orderDetailTable.setRowCount(0)
-        
-            # Nếu có hóa đơn, hiển thị chi tiết và chọn dòng đầu tiên
-            if orders:
-                self.orderTable.selectRow(0)
-                first_invoice = self.orderTable.item(0, 0)
-                if first_invoice:
-                    self.show_order_details(first_invoice)
-                else:
-                    self.orderDetailTable.setRowCount(0)
-
         except Exception as e:
             QMessageBox.critical(self, "Lỗi", f"Không thể tải danh sách hóa đơn: {str(e)}")
 
@@ -177,9 +234,10 @@ class OrderManagement(QWidget):
             QMessageBox.critical(self, "Lỗi", f"Không thể tìm kiếm hóa đơn: {str(e)}")
 
     def add_order(self):
-        from themdonhang import AddOrderForm
-        self.order_form = AddOrderForm()
-        self.order_form.show()
+        from themdonhang import AddOrderForm  # Ensure the import is correct
+        order_form = AddOrderForm(self)  # Truyền self làm parent
+        if order_form.exec() == QtWidgets.QDialog.DialogCode.Accepted:  # Kiểm tra kết quả dialog
+            self.load_orders()
 
     def show_edit_dialog(self):
         selected_item = self.orderTable.currentItem()

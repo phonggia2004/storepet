@@ -47,6 +47,10 @@ class MainWindow(QWidget):
 
         # Thêm trang vào `mainContent`
             self.mainContent.addWidget(self.danhSachTrang[tenTrang])
+        if tenTrang == "sanPham":
+            self.danhSachTrang[tenTrang].load_products()  # Gọi hàm tải lại sản phẩm
+        elif tenTrang == "hoaDon":
+            self.danhSachTrang[tenTrang].load_orders()
 
     # Chuyển đến trang đã chọn
         self.mainContent.setCurrentWidget(self.danhSachTrang[tenTrang])

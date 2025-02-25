@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>AddOrderForm</class>
- <widget class="QWidget" name="AddOrderForm">
+ <class>AddOrderDialog</class>
+ <widget class="QDialog" name="AddOrderDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
