@@ -2,7 +2,8 @@ import sys
 from PyQt6 import QtWidgets, uic
 from PyQt6.QtWidgets import QWidget
 from PyQt6.QtCore import Qt
-from product import ProductApp  # ✅ Import giao diện Quản lý Sản phẩm
+from product import ProductApp
+from hoadon import OrderManagement # ✅ Import giao diện Quản lý Sản phẩm
 
 class MainWindow(QWidget):
     def __init__(self, username, chuc_vu):
@@ -28,6 +29,7 @@ class MainWindow(QWidget):
     def thietLapKetNoi(self):
         """Kết nối các nút với chức năng tương ứng"""
         self.btnProductManagement.clicked.connect(lambda: self.hienThiTrang("sanPham"))
+        self.btnInvoiceManagement.clicked.connect(lambda: self.hienThiTrang("hoaDon"))
         self.logoutButton.clicked.connect(self.dangXuat)
 
     def hienThiTrangChu(self):
@@ -39,14 +41,17 @@ class MainWindow(QWidget):
         """Chuyển đổi hiển thị giữa các trang"""
         if tenTrang not in self.danhSachTrang:
             if tenTrang == "sanPham":
-                self.danhSachTrang[tenTrang] = ProductApp()  # ✅ Tạo giao diện Quản lý Sản phẩm
+                self.danhSachTrang[tenTrang] = ProductApp()
+            elif tenTrang == "hoaDon":
+                self.danhSachTrang[tenTrang] = OrderManagement()
 
-                # Thêm trang vào `mainContent`
-                self.mainContent.addWidget(self.danhSachTrang[tenTrang])
+        # Thêm trang vào `mainContent`
+            self.mainContent.addWidget(self.danhSachTrang[tenTrang])
 
-        # Chuyển đến trang đã chọn
+    # Chuyển đến trang đã chọn
         self.mainContent.setCurrentWidget(self.danhSachTrang[tenTrang])
         self.trangHienTai = tenTrang
+
 
     def dangXuat(self):
         """Xử lý đăng xuất và quay về giao diện đăng nhập"""

@@ -3,7 +3,7 @@ from PyQt6 import uic
 from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox
 import pymysql.cursors
 from config import connect_db
-from register import RegisterWindow
+# from register import RegisterWindow
 
 class LoginWindow(QMainWindow):
     def __init__(self):
@@ -44,8 +44,10 @@ class LoginWindow(QMainWindow):
             connection.close()
 
     def open_register_window(self):
+        from register import RegisterWindow
         self.register_window = RegisterWindow()
         self.register_window.show()
+        self.hide()
         
     def open_trangchu_window(self, username, chuc_vu):
         from home import MainWindow

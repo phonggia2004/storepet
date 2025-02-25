@@ -1,5 +1,7 @@
 import pymysql
 
+
+
 def connect_db():
     try:
         connection = pymysql.connect(
